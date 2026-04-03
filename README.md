@@ -35,6 +35,10 @@ I was about to give up on the idea of having a live wallpaper on my MacBook, but
 3. Open the downloaded `.dmg` file.
 4. Drag and drop the **Aurora** app into the **Applications** folder.
 5. Double-click **Aurora** in your Applications folder to launch it.
+6. **Note on first launch:** You may get a warning saying that Apple can't recognize this app. 
+   - Click **Done** on the warning dialog.
+   - Go to **System Settings** > **Privacy & Security**.
+   - Scroll to the bottom and click **Open Anyway** next to Aurora.
 
 ### Option 2: Build From Source (Using build script)
 If you prefer to compile it yourself, you can use the provided build script:
