@@ -1,0 +1,127 @@
+{
+  "": {
+    "dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/Aurora.d",
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/Aurora.o",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/master.swiftdeps"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/AppDelegate.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/AppDelegate.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/AppDelegate~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/AppDelegate.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/AppDelegate.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/Engine/PlaybackSettings.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PlaybackSettings.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PlaybackSettings~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PlaybackSettings.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PlaybackSettings.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/Engine/VideoPlayerEngine.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/VideoPlayerEngine.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/VideoPlayerEngine~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/VideoPlayerEngine.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/VideoPlayerEngine.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/Engine/WallpaperCycler.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/WallpaperCycler.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/WallpaperCycler~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/WallpaperCycler.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/WallpaperCycler.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/Engine/WallpaperManager.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/WallpaperManager.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/WallpaperManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/WallpaperManager.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/WallpaperManager.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/Engine/WallpaperWindow.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/WallpaperWindow.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/WallpaperWindow~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/WallpaperWindow.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/WallpaperWindow.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/Models/AuroraSettings.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/AuroraSettings.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/AuroraSettings~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/AuroraSettings.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/AuroraSettings.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/Models/Wallpaper.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/Wallpaper.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/Wallpaper~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/Wallpaper.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/Wallpaper.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/Models/WallpaperLibrary.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/WallpaperLibrary.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/WallpaperLibrary~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/WallpaperLibrary.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/WallpaperLibrary.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/System/AuroraLogger.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/AuroraLogger.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/AuroraLogger~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/AuroraLogger.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/AuroraLogger.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/System/DisplayManager.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/DisplayManager.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/DisplayManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/DisplayManager.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/DisplayManager.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/System/PerformanceMonitor.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PerformanceMonitor.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PerformanceMonitor~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PerformanceMonitor.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PerformanceMonitor.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/System/PowerManager.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PowerManager.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PowerManager~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PowerManager.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PowerManager.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/System/SpacesObserver.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/SpacesObserver.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/SpacesObserver~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/SpacesObserver.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/SpacesObserver.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/ImportHandler.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/ImportHandler.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/ImportHandler~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/ImportHandler.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/ImportHandler.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/LibraryViewController.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/LibraryViewController.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/LibraryViewController~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/LibraryViewController.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/LibraryViewController.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/PreferencesWindow.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PreferencesWindow.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PreferencesWindow~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PreferencesWindow.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PreferencesWindow.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/PreviewPanel.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PreviewPanel.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PreviewPanel~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PreviewPanel.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/PreviewPanel.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/StatusBarController.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/StatusBarController.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/StatusBarController~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/StatusBarController.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/StatusBarController.dia"
+  },
+  "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/main.swift": {
+    "object": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/main.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/main~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/main.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Documents/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/release/Aurora.build/main.dia"
+  }
+}
