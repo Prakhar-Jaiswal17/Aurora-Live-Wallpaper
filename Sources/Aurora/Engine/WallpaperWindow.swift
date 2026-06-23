@@ -14,18 +14,21 @@ final class WallpaperWindow: NSWindow {
 
     // MARK: - Properties
 
-    /// The display this window is attached to.
-    let targetScreen: NSScreen
-
     /// Unique display identifier for this window's screen.
+    /// We store the ID (immutable) rather than the NSScreen reference
+    /// because NSScreen objects change when displays are reconnected.
     let displayID: CGDirectDisplayID
+
+    /// Returns the live NSScreen for this window's display, or nil if disconnected.
+    var currentScreen: NSScreen? {
+        return NSScreen.screens.first(where: { $0.displayID == displayID })
+    }
 
     // MARK: - Init
 
     /// Creates a wallpaper window for the given screen.
     /// - Parameter screen: The NSScreen to cover with this wallpaper window.
     init(for screen: NSScreen) {
-        self.targetScreen = screen
         self.displayID = screen.displayID
 
         super.init(
@@ -42,11 +45,11 @@ final class WallpaperWindow: NSWindow {
     // MARK: - Configuration
 
     private func configureWindow() {
-        // Place window just below Finder's desktop icon layer
-        level = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.desktopWindow)) - 1)
+        // Place window at the desktop level (behind Finder icons, on top of desktop background)
+        level = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.desktopWindow)))
 
-        // Behavior: appear on all Spaces, don't move in Mission Control, hidden from Cmd+Tab
-        collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle]
+        // Behavior: appear on all Spaces & desktops, stationary in Mission Control, hidden from Cmd+Tab
+        collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle, .fullScreenAuxiliary]
 
         // Click-through: all mouse events pass to desktop/Finder
         ignoresMouseEvents = true
@@ -61,9 +64,13 @@ final class WallpaperWindow: NSWindow {
 
         // Prevent the window from being released when closed
         isReleasedWhenClosed = false
-        
-        // Show on lock screen
+
+        // Show on lock screen / login window
         canBecomeVisibleWithoutLogin = true
+
+        // Prevent the window server from hiding this window during
+        // screen sharing or display transitions (helps lock screen persistence)
+        sharingType = .none
 
         // Window cannot become key or main — it's just a display surface
         // (handled by override below)
@@ -108,8 +115,14 @@ final class WallpaperWindow: NSWindow {
     /// Updates the window frame to match the screen's current frame.
     /// Called when screen resolution or position changes.
     func updateFrame() {
-        setFrame(targetScreen.frame, display: true)
-        AuroraLogger.logWindowState("Updated frame for display \(displayID) to \(targetScreen.frame)")
+        guard let screen = currentScreen else {
+            AuroraLogger.logFailure("Cannot update frame for display \(displayID): screen not found")
+            return
+        }
+        setFrame(screen.frame, display: true)
+        // Also update the content view frame to match
+        contentView?.frame = NSRect(origin: .zero, size: screen.frame.size)
+        AuroraLogger.logWindowState("Updated frame for display \(displayID) to \(screen.frame)")
     }
 
     // MARK: - Validation
@@ -117,10 +130,18 @@ final class WallpaperWindow: NSWindow {
     /// Checks if this window is still correctly positioned in the window stack.
     /// Returns false if the window has been detached or moved out of the correct level.
     var isHealthy: Bool {
-        let correctLevel = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.desktopWindow)) - 1)
+        guard let screen = currentScreen else {
+            // Screen no longer connected — not healthy
+            AuroraLogger.logFailure("Health check failed for display \(displayID): screen disconnected")
+            return false
+        }
+
+        let correctLevel = NSWindow.Level(rawValue: Int(CGWindowLevelForKey(.desktopWindow)))
         let isVisible = isVisible && alphaValue > 0
         let isCorrectLevel = level == correctLevel
-        let isCorrectFrame = frame == targetScreen.frame
+
+        // Use a tolerance for frame comparison to handle rounding during display transitions
+        let isCorrectFrame = frameMatchesScreen(screen)
 
         if !isVisible || !isCorrectLevel || !isCorrectFrame {
             AuroraLogger.logFailure(
@@ -130,6 +151,17 @@ final class WallpaperWindow: NSWindow {
             return false
         }
         return true
+    }
+
+    /// Compares the window frame to the live screen frame with a small tolerance
+    /// to avoid false negatives during display transition rounding.
+    func frameMatchesScreen(_ screen: NSScreen) -> Bool {
+        let screenFrame = screen.frame
+        let tolerance: CGFloat = 2.0
+        return abs(frame.origin.x - screenFrame.origin.x) <= tolerance &&
+               abs(frame.origin.y - screenFrame.origin.y) <= tolerance &&
+               abs(frame.width - screenFrame.width) <= tolerance &&
+               abs(frame.height - screenFrame.height) <= tolerance
     }
 
     // MARK: - Cleanup

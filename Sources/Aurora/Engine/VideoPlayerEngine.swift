@@ -284,13 +284,68 @@ final class VideoPlayerEngine {
         }
     }
 
+    // MARK: - Runtime Audio Control
+
+    /// Sets the muted state on the live player (does not persist to settings).
+    func setMuted(_ muted: Bool) {
+        player?.isMuted = muted
+        settings.isMuted = muted
+        AuroraLogger.engine.debug("Muted set to \(muted)")
+    }
+
+    /// Sets the volume on the live player (does not persist to settings).
+    func setVolume(_ volume: Float) {
+        player?.volume = volume
+        settings.volume = volume
+        AuroraLogger.engine.debug("Volume set to \(volume)")
+    }
+
+    // MARK: - Engine Health
+
+    /// Returns true if the video engine is healthy and capable of playback.
+    /// Checks for stalled/broken AVPlayer state beyond just the window position.
+    var isEngineHealthy: Bool {
+        guard let player = player else { return false }
+
+        // If we expect to be playing but the player is paused with no waiting reason, it's stalled
+        if isPlaying && player.timeControlStatus == .paused && player.reasonForWaitingToPlay == nil {
+            // Player thinks it's playing but AVPlayer disagrees — stalled
+            AuroraLogger.engine.debug("Engine health: stalled (isPlaying=true but player is paused)")
+            return false
+        }
+
+        // If the player has no current item, the looper or item was lost
+        if player.currentItem == nil {
+            AuroraLogger.engine.debug("Engine health: no current item")
+            return false
+        }
+
+        // If the current item has failed
+        if player.currentItem?.status == .failed {
+            AuroraLogger.engine.debug("Engine health: current item failed")
+            return false
+        }
+
+        // If the player layer is detached from its superlayer
+        if playerLayer?.superlayer == nil {
+            AuroraLogger.engine.debug("Engine health: player layer detached")
+            return false
+        }
+
+        return true
+    }
+
     // MARK: - Layer Management
 
     /// Updates the player layer frame to match a new size (e.g., screen resolution change).
+    /// The frame should be in bounds-relative coordinates (origin 0,0).
     func updateLayerFrame(_ frame: CGRect) {
         CATransaction.begin()
         CATransaction.setDisableActions(true)
-        playerLayer?.frame = frame
+        // Ensure origin is at (0,0) for correct layer positioning
+        let boundsFrame = CGRect(origin: .zero, size: frame.size)
+        playerLayer?.frame = boundsFrame
+        playerLayer?.bounds = boundsFrame
         CATransaction.commit()
     }
 

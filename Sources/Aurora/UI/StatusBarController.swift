@@ -1,6 +1,6 @@
 // Aurora — StatusBarController
-// Menu bar (NSStatusItem) app with quick controls: play/pause, change wallpaper,
-// preferences, and quit.
+// Menu bar (NSStatusItem) app with quick controls: play/pause, mute/unmute,
+// change wallpaper, preferences, and quit.
 
 import AppKit
 
@@ -18,6 +18,9 @@ final class StatusBarController {
     /// Play/Pause menu item (needs dynamic title).
     private var playPauseItem: NSMenuItem?
 
+    /// Mute/Unmute menu item (needs dynamic title).
+    private var muteUnmuteItem: NSMenuItem?
+
     /// Current wallpaper name display.
     private var currentWallpaperItem: NSMenuItem?
 
@@ -28,6 +31,7 @@ final class StatusBarController {
 
     init() {
         setupStatusItem()
+        setupNotificationObservers()
         AuroraLogger.ui.info("StatusBarController initialized")
     }
 
@@ -71,6 +75,17 @@ final class StatusBarController {
         )
         playPauseItem?.target = self
         if let item = playPauseItem {
+            menu.addItem(item)
+        }
+
+        // Mute / Unmute
+        muteUnmuteItem = NSMenuItem(
+            title: WallpaperManager.shared.isMuted ? "Unmute Wallpaper" : "Mute Wallpaper",
+            action: #selector(toggleMute),
+            keyEquivalent: "m"
+        )
+        muteUnmuteItem?.target = self
+        if let item = muteUnmuteItem {
             menu.addItem(item)
         }
 
@@ -120,11 +135,42 @@ final class StatusBarController {
         statusItem?.menu = menu
     }
 
+    // MARK: - Notification Observers
+
+    /// Observes wallpaper state changes to keep menu items in sync automatically.
+    private func setupNotificationObservers() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(pauseStateDidChange),
+            name: .wallpaperPauseStateChanged,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(muteStateDidChange),
+            name: .wallpaperMuteStateChanged,
+            object: nil
+        )
+    }
+
+    @objc private func pauseStateDidChange() {
+        updatePlayPauseTitle()
+    }
+
+    @objc private func muteStateDidChange() {
+        updateMuteUnmuteTitle()
+    }
+
     // MARK: - Actions
 
     @objc private func togglePlayback() {
         WallpaperManager.shared.toggleAll()
-        updatePlayPauseTitle()
+        // Title is updated automatically via notification
+    }
+
+    @objc private func toggleMute() {
+        WallpaperManager.shared.toggleMuteAll()
+        // Title is updated automatically via notification
     }
 
     @objc private func showLibrary() {
@@ -137,8 +183,10 @@ final class StatusBarController {
     @objc private func importWallpaper() {
         ImportHandler.shared.importFromFilePicker { [weak self] wallpaper in
             if let wallpaper = wallpaper {
-                // Apply to main display
-                WallpaperManager.shared.setWallpaper(wallpaper)
+                // Apply wallpaper to all displays
+                for screen in NSScreen.screens {
+                    WallpaperManager.shared.setWallpaper(wallpaper, for: screen.displayID, target: .both)
+                }
                 self?.updateCurrentWallpaperDisplay(name: wallpaper.name)
             }
         }
@@ -169,6 +217,12 @@ final class StatusBarController {
         playPauseItem?.title = isPaused ? "Resume Wallpaper" : "Pause Wallpaper"
     }
 
+    /// Updates the mute/unmute menu item title based on current state.
+    func updateMuteUnmuteTitle() {
+        let isMuted = WallpaperManager.shared.isMuted
+        muteUnmuteItem?.title = isMuted ? "Unmute Wallpaper" : "Mute Wallpaper"
+    }
+
     /// Updates the current wallpaper name display.
     func updateCurrentWallpaperDisplay(name: String) {
         currentWallpaperItem?.title = "♦ \(name)"
@@ -185,3 +239,4 @@ final class StatusBarController {
         return prefs
     }
 }
+

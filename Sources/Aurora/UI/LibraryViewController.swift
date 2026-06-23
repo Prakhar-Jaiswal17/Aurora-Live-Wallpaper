@@ -19,8 +19,14 @@ final class LibraryViewController: NSViewController {
     private var importButton: NSButton!
     private var emptyStateView: NSView!
     private var applyButton: NSButton!
+    private var setStaticButton: NSButton!
     private var previewButton: NSButton!
     private var deleteButton: NSButton!
+    private var targetPopup: NSPopUpButton!
+    private var displaysButton: NSButton!
+    private var displaysPopover: NSPopover?
+    private var selectedDisplayIDs: Set<CGDirectDisplayID> = []
+
 
     /// Retained reference to the preview panel (prevents ARC deallocation).
     private var previewPanel: PreviewPanel?
@@ -43,6 +49,9 @@ final class LibraryViewController: NSViewController {
         self.view = NSView(frame: NSRect(x: 0, y: 0, width: 680, height: 620))
         view.translatesAutoresizingMaskIntoConstraints = false
 
+        // Initialize selected displays to all connected screens by default
+        selectedDisplayIDs = Set(NSScreen.screens.map { $0.displayID })
+
         setupTopBar()
         setupCollectionView()
         setupBottomBar()
@@ -50,6 +59,7 @@ final class LibraryViewController: NSViewController {
         setupDragDrop()
         setupLayoutConstraints()
         reloadData()
+        updateDisplaysButtonTitle()
     }
 
     // MARK: - Setup
@@ -119,7 +129,7 @@ final class LibraryViewController: NSViewController {
     }
 
     private func setupBottomBar() {
-        // Bottom action bar with Apply, Preview, Delete buttons
+        // Bottom action bar with Apply (live wallpaper), Set as Wallpaper (static), Preview, Delete
         bottomBar = NSView()
         bottomBar.translatesAutoresizingMaskIntoConstraints = false
         bottomBar.wantsLayer = true
@@ -140,30 +150,63 @@ final class LibraryViewController: NSViewController {
         ])
 
         // Delete button (left side)
-        deleteButton = NSButton(title: "Delete", target: self, action: #selector(deleteSelectedWallpaper))
+        deleteButton = NSButton(title: "", target: self, action: #selector(deleteSelectedWallpaper))
         deleteButton.translatesAutoresizingMaskIntoConstraints = false
         deleteButton.bezelStyle = .rounded
         deleteButton.isEnabled = false
         deleteButton.contentTintColor = .systemRed
+        deleteButton.toolTip = "Delete selected wallpaper"
         if let deleteImage = NSImage(systemSymbolName: "trash", accessibilityDescription: "Delete") {
             deleteButton.image = deleteImage
-            deleteButton.imagePosition = .imageLeading
+            deleteButton.imagePosition = .imageOnly
         }
         bottomBar.addSubview(deleteButton)
 
-        // Preview button (right side, before Apply)
-        previewButton = NSButton(title: "Preview", target: self, action: #selector(previewSelectedWallpaper))
+
+        // Preview button
+        previewButton = NSButton(title: "", target: self, action: #selector(previewSelectedWallpaper))
         previewButton.translatesAutoresizingMaskIntoConstraints = false
         previewButton.bezelStyle = .rounded
         previewButton.isEnabled = false
+        previewButton.toolTip = "Preview wallpaper"
         if let previewImage = NSImage(systemSymbolName: "eye", accessibilityDescription: "Preview") {
             previewButton.image = previewImage
-            previewButton.imagePosition = .imageLeading
+            previewButton.imagePosition = .imageOnly
         }
         bottomBar.addSubview(previewButton)
 
-        // Apply button (primary action, right-most)
-        applyButton = NSButton(title: "✦ Apply to Desktop", target: self, action: #selector(applySelectedWallpaper))
+        // Set as Wallpaper button — extracts a frame and sets it as the macOS system wallpaper
+        setStaticButton = NSButton(title: "Set as Wallpaper", target: self, action: #selector(setAsStaticWallpaper))
+        setStaticButton.translatesAutoresizingMaskIntoConstraints = false
+        setStaticButton.bezelStyle = .rounded
+        setStaticButton.isEnabled = false
+        setStaticButton.toolTip = "Set as static desktop wallpaper"
+        if let photoImage = NSImage(systemSymbolName: "photo", accessibilityDescription: "Set as Wallpaper") {
+            setStaticButton.image = photoImage
+            setStaticButton.imagePosition = .imageLeading
+        }
+        bottomBar.addSubview(setStaticButton)
+
+        // Wallpaper target popup — choose where to apply (Both / Desktop / Lock Screen)
+        targetPopup = NSPopUpButton(frame: .zero, pullsDown: false)
+        targetPopup.translatesAutoresizingMaskIntoConstraints = false
+        for target in WallpaperTarget.allCases {
+            targetPopup.addItem(withTitle: target.description)
+        }
+        targetPopup.selectItem(at: 0)  // Default: Both (Desktop & Lock Screen)
+        targetPopup.isEnabled = false
+        targetPopup.controlSize = .regular
+        bottomBar.addSubview(targetPopup)
+
+        // Displays button
+        displaysButton = NSButton(title: "Displays: All", target: self, action: #selector(showDisplaysPopover))
+        displaysButton.translatesAutoresizingMaskIntoConstraints = false
+        displaysButton.bezelStyle = .rounded
+        displaysButton.isEnabled = false
+        bottomBar.addSubview(displaysButton)
+
+        // Apply button (primary action) — sets wallpaper with selected target
+        applyButton = NSButton(title: "✦ Apply", target: self, action: #selector(applyLiveWallpaper))
         applyButton.translatesAutoresizingMaskIntoConstraints = false
         applyButton.bezelStyle = .rounded
         applyButton.keyEquivalent = "\r"  // Return key
@@ -172,14 +215,29 @@ final class LibraryViewController: NSViewController {
         bottomBar.addSubview(applyButton)
 
         NSLayoutConstraint.activate([
+            // Left group
             deleteButton.leadingAnchor.constraint(equalTo: bottomBar.leadingAnchor, constant: 16),
             deleteButton.centerYAnchor.constraint(equalTo: bottomBar.centerYAnchor),
 
+            previewButton.leadingAnchor.constraint(equalTo: deleteButton.trailingAnchor, constant: 8),
+            previewButton.centerYAnchor.constraint(equalTo: bottomBar.centerYAnchor),
+
+            setStaticButton.leadingAnchor.constraint(equalTo: previewButton.trailingAnchor, constant: 8),
+            setStaticButton.centerYAnchor.constraint(equalTo: bottomBar.centerYAnchor),
+
+            // Right group
             applyButton.trailingAnchor.constraint(equalTo: bottomBar.trailingAnchor, constant: -16),
             applyButton.centerYAnchor.constraint(equalTo: bottomBar.centerYAnchor),
 
-            previewButton.trailingAnchor.constraint(equalTo: applyButton.leadingAnchor, constant: -10),
-            previewButton.centerYAnchor.constraint(equalTo: bottomBar.centerYAnchor),
+            targetPopup.trailingAnchor.constraint(equalTo: applyButton.leadingAnchor, constant: -8),
+            targetPopup.centerYAnchor.constraint(equalTo: bottomBar.centerYAnchor),
+            targetPopup.widthAnchor.constraint(greaterThanOrEqualToConstant: 140),
+
+            displaysButton.trailingAnchor.constraint(equalTo: targetPopup.leadingAnchor, constant: -8),
+            displaysButton.centerYAnchor.constraint(equalTo: bottomBar.centerYAnchor),
+
+            // Prevent overlap between left and right groups
+            displaysButton.leadingAnchor.constraint(greaterThanOrEqualTo: setStaticButton.trailingAnchor, constant: 16)
         ])
     }
 
@@ -279,8 +337,11 @@ final class LibraryViewController: NSViewController {
     private func updateButtonStates() {
         let hasSelection = selectedIndex != nil
         applyButton?.isEnabled = hasSelection
+        setStaticButton?.isEnabled = hasSelection
         previewButton?.isEnabled = hasSelection
         deleteButton?.isEnabled = hasSelection
+        targetPopup?.isEnabled = hasSelection
+        displaysButton?.isEnabled = hasSelection
     }
 
     private var selectedWallpaper: Wallpaper? {
@@ -300,15 +361,77 @@ final class LibraryViewController: NSViewController {
         }
     }
 
-    @objc private func applySelectedWallpaper() {
+    @objc private func applyLiveWallpaper() {
         guard let wallpaper = selectedWallpaper else { return }
-        WallpaperManager.shared.setWallpaper(wallpaper)
-        AuroraLogger.ui.info("Applied wallpaper '\(wallpaper.name, privacy: .public)' from library")
+        let target = selectedWallpaperTarget
+        
+        // Ensure at least one display is selected
+        guard !selectedDisplayIDs.isEmpty else {
+            AuroraLogger.ui.warning("Cannot apply wallpaper: no displays selected")
+            return
+        }
 
-        // Brief visual feedback
-        applyButton.title = "✓ Applied!"
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak self] in
-            self?.applyButton.title = "✦ Apply to Desktop"
+        // Apply to all selected displays
+        for displayID in selectedDisplayIDs {
+            WallpaperManager.shared.setWallpaper(wallpaper, for: displayID, target: target)
+        }
+        
+        AuroraLogger.ui.info("Applied wallpaper '\(wallpaper.name, privacy: .public)' to \(self.selectedDisplayIDs.count) display(s) with target: \(target.description)")
+        showApplyFeedback(on: applyButton, originalTitle: "✦ Apply")
+    }
+
+    /// Returns the currently selected wallpaper target from the popup.
+    private var selectedWallpaperTarget: WallpaperTarget {
+        let targets = WallpaperTarget.allCases
+        let index = targetPopup?.indexOfSelectedItem ?? 0
+        guard index >= 0 && index < targets.count else { return .both }
+        return targets[index]
+    }
+
+    @objc private func setAsStaticWallpaper() {
+        guard let wallpaper = selectedWallpaper else { return }
+        WallpaperManager.shared.setStaticWallpaper(wallpaper)
+        AuroraLogger.ui.info("Set static wallpaper '\(wallpaper.name, privacy: .public)' as macOS wallpaper")
+        showApplyFeedback(on: setStaticButton, originalTitle: "Set as Wallpaper")
+    }
+
+    /// Shows brief "✓ Applied!" feedback on any apply button.
+    private func showApplyFeedback(on button: NSButton, originalTitle: String) {
+        button.title = "✓ Applied!"
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { [weak button] in
+            button?.title = originalTitle
+        }
+    }
+
+    // MARK: - Display Selection
+
+    @objc private func showDisplaysPopover() {
+        if displaysPopover == nil {
+            let popover = NSPopover()
+            let vc = DisplaySelectorViewController(selectedDisplayIDs: selectedDisplayIDs)
+            vc.delegate = self
+            popover.contentViewController = vc
+            popover.behavior = .transient
+            self.displaysPopover = popover
+        }
+        
+        guard let popover = displaysPopover else { return }
+        
+        if popover.isShown {
+            popover.close()
+        } else {
+            popover.show(relativeTo: displaysButton.bounds, of: displaysButton, preferredEdge: .minY)
+        }
+    }
+
+    private func updateDisplaysButtonTitle() {
+        let totalScreens = NSScreen.screens.count
+        if selectedDisplayIDs.count == totalScreens && totalScreens > 0 {
+            displaysButton.title = "Displays: All"
+        } else if selectedDisplayIDs.isEmpty {
+            displaysButton.title = "Displays: None"
+        } else {
+            displaysButton.title = "Displays: \(selectedDisplayIDs.count)"
         }
     }
 
@@ -372,6 +495,15 @@ extension LibraryViewController: NSCollectionViewDelegate {
         if collectionView.selectionIndexPaths.isEmpty {
             selectedIndex = nil
         }
+    }
+}
+
+// MARK: - DisplaySelectorDelegate
+
+extension LibraryViewController: DisplaySelectorDelegate {
+    func displaySelectionDidChange(selectedDisplayIDs: Set<CGDirectDisplayID>) {
+        self.selectedDisplayIDs = selectedDisplayIDs
+        updateDisplaysButtonTitle()
     }
 }
 

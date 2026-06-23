@@ -106,7 +106,52 @@ else
     echo "⚠️  No icon source found at $ICON_SOURCE — app will use default icon"
 fi
 
-# 6. Ad-hoc code sign (required for modern macOS)
+# 6. Build companion AuroraScreenSaver.saver bundle
+echo "🖥️  Building companion screen saver..."
+
+SAVER_SRC="$SCRIPT_DIR/Sources/AuroraScreenSaver/AuroraScreenSaverView.swift"
+SAVER_PLIST="$SCRIPT_DIR/Sources/AuroraScreenSaver/Info.plist"
+SAVER_BUNDLE="$RESOURCES_DIR/AuroraScreenSaver.saver"
+SAVER_CONTENTS="$SAVER_BUNDLE/Contents"
+SAVER_MACOS="$SAVER_CONTENTS/MacOS"
+
+if [ -f "$SAVER_SRC" ] && [ -f "$SAVER_PLIST" ]; then
+    mkdir -p "$SAVER_MACOS"
+
+    # Detect architecture for compilation
+    ARCH=$(uname -m)
+    if [ "$ARCH" = "arm64" ]; then
+        TARGET="arm64-apple-macos13.0"
+    else
+        TARGET="x86_64-apple-macos13.0"
+    fi
+
+    # Compile the screen saver as a loadable bundle (dynamic library)
+    swiftc \
+        -module-name AuroraScreenSaver \
+        -emit-library \
+        -target "$TARGET" \
+        -framework ScreenSaver \
+        -framework AVFoundation \
+        -framework AppKit \
+        -framework QuartzCore \
+        -Xlinker -bundle \
+        -Xlinker -rpath -Xlinker @loader_path/../Frameworks \
+        -o "$SAVER_MACOS/AuroraScreenSaver" \
+        "$SAVER_SRC" 2>&1
+
+    if [ $? -eq 0 ]; then
+        # Copy the Info.plist
+        cp "$SAVER_PLIST" "$SAVER_CONTENTS/Info.plist"
+        echo "✅ Screen saver built"
+    else
+        echo "⚠️  Screen saver build failed — lock screen live wallpaper will be unavailable"
+    fi
+else
+    echo "⚠️  Screen saver source not found — skipping"
+fi
+
+# 7. Ad-hoc code sign (required for modern macOS)
 echo "🔏 Code signing..."
 xattr -cr "$APP_DIR" 2>/dev/null
 codesign --force --deep --sign - "$APP_DIR" 2>/dev/null && echo "✅ Code signed" || echo "⚠️  Code signing skipped"

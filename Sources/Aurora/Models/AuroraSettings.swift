@@ -25,6 +25,7 @@ final class AuroraSettings {
         static let cycleEnabled = "aurora.cycleEnabled"
         static let cycleInterval = "aurora.cycleInterval"
         static let cycleUnit = "aurora.cycleUnit"
+        static let hasCompletedFirstLaunch = "aurora.hasCompletedFirstLaunch"
     }
 
     // MARK: - UserDefaults
@@ -98,6 +99,14 @@ final class AuroraSettings {
     var restoreLastSession: Bool {
         get { defaults.bool(forKey: Keys.restoreLastSession) }
         set { defaults.set(newValue, forKey: Keys.restoreLastSession) }
+    }
+
+    // MARK: - First Launch
+
+    /// Whether the app has completed its first-launch setup (auto-import default wallpaper).
+    var hasCompletedFirstLaunch: Bool {
+        get { defaults.bool(forKey: Keys.hasCompletedFirstLaunch) }
+        set { defaults.set(newValue, forKey: Keys.hasCompletedFirstLaunch) }
     }
 
     // MARK: - Background App Focus
@@ -256,8 +265,32 @@ enum CycleUnit: String, Codable, CaseIterable {
     }
 }
 
+// MARK: - Wallpaper Target
+
+/// Specifies where to apply a wallpaper.
+enum WallpaperTarget: String, Codable, CaseIterable {
+    /// Apply to both desktop (live video) and lock screen (screen saver).
+    case both
+
+    /// Apply only to the desktop (live video wallpaper).
+    case homeScreen
+
+    /// Apply only to the lock screen (via companion screen saver).
+    case lockScreen
+
+    var description: String {
+        switch self {
+        case .both:       return "Desktop & Lock Screen"
+        case .homeScreen: return "Desktop Only"
+        case .lockScreen: return "Lock Screen Only"
+        }
+    }
+}
+
 // MARK: - Notification Names
 
 extension Notification.Name {
     static let cycleSettingsChanged = Notification.Name("aurora.cycleSettingsChanged")
+    static let wallpaperPauseStateChanged = Notification.Name("aurora.wallpaperPauseStateChanged")
+    static let wallpaperMuteStateChanged = Notification.Name("aurora.wallpaperMuteStateChanged")
 }

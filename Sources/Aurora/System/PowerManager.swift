@@ -40,6 +40,7 @@ final class PowerManager {
         updatePowerSource()
         startMonitoring()
         setupScreenLockObservers()
+        setupSleepWakeObservers()
         AuroraLogger.system.info("PowerManager initialized — power source: \(String(describing: self.currentPowerSource))")
     }
 
@@ -130,8 +131,8 @@ final class PowerManager {
 
         switch mode {
         case .aggressive:
-            // Completely pause all wallpapers
-            WallpaperManager.shared.pauseAll()
+            // Completely pause all wallpapers (system-initiated)
+            WallpaperManager.shared.systemPauseAll()
 
         case .balanced:
             // Reduce playback rate to 0.5x
@@ -153,7 +154,7 @@ final class PowerManager {
         let wallpaperManager = WallpaperManager.shared
 
         if wallpaperManager.isPaused {
-            wallpaperManager.resumeAll()
+            wallpaperManager.systemResumeAll()
         }
 
         if wallpaperManager.isThrottled {
@@ -173,13 +174,13 @@ final class PowerManager {
     @objc private func screenLocked() {
         guard !isScreenLocked else { return }
         isScreenLocked = true
-        AuroraLogger.system.info("Screen locked — keeping wallpapers active for lock screen display")
+        AuroraLogger.system.info("Screen locked — companion screen saver handles lock screen display")
         
-        // Force resume playback for lock screen viewing regardless of background app behavior,
-        // unless constrained by battery.
+        // Keep desktop wallpaper playback alive so it's ready when the screen unlocks,
+        // unless we're in aggressive battery saving mode.
         if !isBatterySaving || AuroraSettings.shared.batteryMode != .aggressive {
              if WallpaperManager.shared.isPaused {
-                 WallpaperManager.shared.resumeAll()
+                 WallpaperManager.shared.systemResumeAll()
              }
         }
     }
@@ -193,6 +194,57 @@ final class PowerManager {
         // fullscreen app/focused app justifies it.
         if !isBatterySaving || AuroraSettings.shared.batteryMode != .aggressive {
             // Re-evaluate what should be playing. forceReevaluation will trigger resume if allowed
+            PerformanceMonitor.shared.forceReevaluation()
+        }
+    }
+
+    // MARK: - Sleep/Wake Handling
+
+    private func setupSleepWakeObservers() {
+        NSWorkspace.shared.notificationCenter.addObserver(
+            self,
+            selector: #selector(systemWillSleep),
+            name: NSWorkspace.willSleepNotification,
+            object: nil
+        )
+        NSWorkspace.shared.notificationCenter.addObserver(
+            self,
+            selector: #selector(systemDidWake),
+            name: NSWorkspace.didWakeNotification,
+            object: nil
+        )
+        AuroraLogger.system.info("Sleep/Wake observers registered")
+    }
+
+    @objc private func systemWillSleep() {
+        AuroraLogger.system.info("System going to sleep — pausing engines")
+        // Gracefully pause all engines before sleep to prevent stale state
+        WallpaperManager.shared.systemPauseAll()
+    }
+
+    @objc private func systemDidWake() {
+        AuroraLogger.system.info("System woke from sleep — scheduling engine recovery")
+
+        // Delay recovery to give the GPU and display pipeline time to reinitialize.
+        // Attempting recovery immediately can fail because the display isn't ready yet.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) { [weak self] in
+            guard let self = self else { return }
+
+            // If user had manually paused before sleep, respect that
+            if WallpaperManager.shared.isUserPaused {
+                AuroraLogger.system.info("User had paused before sleep — keeping paused")
+                return
+            }
+
+            // Recover any stalled engines (AVPlayer often breaks after sleep)
+            WallpaperManager.shared.recoverAllEngines()
+
+            // Resume playback if not restricted by battery/fullscreen rules
+            if !self.isBatterySaving || AuroraSettings.shared.batteryMode != .aggressive {
+                WallpaperManager.shared.systemResumeAll()
+            }
+
+            // Re-evaluate performance state
             PerformanceMonitor.shared.forceReevaluation()
         }
     }

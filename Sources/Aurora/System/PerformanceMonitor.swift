@@ -130,7 +130,7 @@ final class PerformanceMonitor {
             let fps = AuroraSettings.shared.backgroundFramerate
             WallpaperManager.shared.setFramerateTargetAll(fps)
         case .pause:
-            WallpaperManager.shared.pauseAll()
+            WallpaperManager.shared.systemPauseAll()
         }
         AuroraLogger.performance.info("Background behavior applied: \(behavior.rawValue)")
     }
@@ -140,7 +140,7 @@ final class PerformanceMonitor {
         
         // Only resume if not restricted by fullscreen or battery rules
         if !isFullscreenAppActive && (!PowerManager.shared.isBatterySaving || AuroraSettings.shared.batteryMode != .aggressive) && !PowerManager.shared.isScreenLocked {
-            WallpaperManager.shared.resumeAll()
+            WallpaperManager.shared.systemResumeAll()
         }
         AuroraLogger.performance.info("Restored from background behavior")
     }
@@ -161,7 +161,7 @@ final class PerformanceMonitor {
                     // Confirmed fullscreen for 1+ second
                     if !isFullscreenAppActive {
                         isFullscreenAppActive = true
-                        WallpaperManager.shared.pauseAll()
+                        WallpaperManager.shared.systemPauseAll()
                         AuroraLogger.logPerformanceAction("Fullscreen app confirmed — wallpapers paused")
                     }
                 }
@@ -178,7 +178,7 @@ final class PerformanceMonitor {
                 // Only resume if not battery-paused and not paused by background focus
                 let allowResumeFocus = !isBackgroundBehaviorActive || AuroraSettings.shared.backgroundBehavior != .pause
                 if !PowerManager.shared.isBatterySaving && allowResumeFocus && !PowerManager.shared.isScreenLocked {
-                    WallpaperManager.shared.resumeAll()
+                    WallpaperManager.shared.systemResumeAll()
                     AuroraLogger.logPerformanceAction("Fullscreen app exited — wallpapers resumed")
                 }
             }

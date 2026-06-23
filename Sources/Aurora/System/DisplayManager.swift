@@ -30,6 +30,11 @@ final class DisplayManager {
     /// Currently tracked displays.
     private(set) var displays: [CGDirectDisplayID: DisplayInfo] = [:]
 
+    /// Debounce work item for screen change notifications.
+    /// macOS fires multiple rapid notifications during display plug/unplug;
+    /// debouncing ensures we only process the final stable configuration.
+    private var screenChangeDebounce: DispatchWorkItem?
+
     // MARK: - Init
 
     private init() {
@@ -51,7 +56,22 @@ final class DisplayManager {
     }
 
     @objc private func screenParametersChanged(_ notification: Notification) {
-        AuroraLogger.system.info("Screen parameters changed notification received")
+        AuroraLogger.system.info("Screen parameters changed notification received — debouncing")
+
+        // Cancel any pending debounce
+        screenChangeDebounce?.cancel()
+
+        // Schedule the actual processing after 0.5s to coalesce rapid notifications
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.processScreenChange()
+        }
+        screenChangeDebounce = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: workItem)
+    }
+
+    /// Processes screen change after debounce period has elapsed.
+    private func processScreenChange() {
+        AuroraLogger.system.info("Processing debounced screen change")
 
         let previousDisplayIDs = Set(displays.keys)
         refreshDisplayList()

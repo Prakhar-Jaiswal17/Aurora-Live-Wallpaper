@@ -6,7 +6,15 @@
 	<dict>
 		<key>Resources/AppIcon.icns</key>
 		<data>
-		+UkdWa0dAhPsxjp53xYj6fvZL2U=
+		0lgngQmJzeXDGyDloSJNDW598pg=
+		</data>
+		<key>Resources/AuroraScreenSaver.saver/Contents/Info.plist</key>
+		<data>
+		JlsHO9r8g0tPEZWX5mLRpMZvX1g=
+		</data>
+		<key>Resources/AuroraScreenSaver.saver/Contents/MacOS/AuroraScreenSaver</key>
+		<data>
+		qkMIZn57btZJHHec4AyLpJ3MW1k=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -15,7 +23,21 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			fhdLKyP81GoMORhqq77ycd7yCuBSyEy6vH0qgaWcIZw=
+			i9GFCUs2R/W/QHgm0BMz6EOE3HpyzR+BVfOWBF39J38=
+			</data>
+		</dict>
+		<key>Resources/AuroraScreenSaver.saver/Contents/Info.plist</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			mTbEHzxL/e2R8gsVMAXVZZsLVKgDrPBJqHPn6Tut6EA=
+			</data>
+		</dict>
+		<key>Resources/AuroraScreenSaver.saver/Contents/MacOS/AuroraScreenSaver</key>
+		<dict>
+			<key>hash2</key>
+			<data>
+			EAbexx4O4JFHike5tnG92ptGJa0AGWe8cw8337OVetI=
 			</data>
 		</dict>
 	</dict>
