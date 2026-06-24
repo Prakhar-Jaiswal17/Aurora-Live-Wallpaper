@@ -12,8 +12,9 @@ I was about to give up on the idea of having a live wallpaper on my MacBook, but
 
 - **Live wallpapers** — Play MP4/MOV videos as desktop backgrounds
 - **Behind desktop icons** — True wallpaper-layer rendering, not a fullscreen window
-- **Multi-display support** — Independent wallpapers per monitor
-- **Smart power management** — 3-tier battery modes (Aggressive/Balanced/Permissive)
+- **Multi-display support** — Independent wallpapers per monitor, with robust triple-layer display connection tracking (CoreGraphics callbacks, AppKit notifications, and polling fallbacks) and selective workspace toggling.
+- **System Wallpaper Fallback** — Displays without an assigned live wallpaper remain transparent, allowing native macOS wallpapers to shine through instead of showing solid black.
+- **Smart power management** — 3-tier battery modes (Aggressive/Balanced/Permissive) managed via a fully responsive, scrollable, and resizable preferences panel.
 - **Fullscreen detection** — Auto-pauses when a fullscreen app is active (debounced dual-heuristic)
 - **Finder restart recovery** — Auto-recovers wallpaper windows if Finder crashes
 - **State restoration** — Restores last session on app launch
@@ -97,7 +98,7 @@ Finder Desktop Icons
 macOS Desktop Background                 ← Lowest
 ```
 
-This ensures the video plays behind desktop icons while remaining above the static desktop background. The window uses `collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle]` to persist across Spaces and hide from Mission Control.
+This ensures the video plays behind desktop icons while remaining above the static desktop background. The window uses `collectionBehavior = [.canJoinAllSpaces, .stationary, .ignoresCycle]` to persist across Spaces and hide from Mission Control. When no live wallpaper is assigned to a display, the window content view is transparent (`NSColor.clear`), allowing the macOS system wallpaper to shine through natively.
 
 ## Architecture
 
@@ -114,6 +115,7 @@ Sources/Aurora/
 ## Performance
 
 - Hardware-accelerated video decoding via AVFoundation (native on Apple Silicon)
+- Triple-layer display detection (CoreGraphics, AppKit, and polling fallback) with a 0.5s debounce to safely handle hotplugging and sleep-wake changes
 - Adaptive health checks (2s on failure → 10s when stable)
 - CPU monitoring with 5-sample rolling average to prevent noisy throttling
 - Fullscreen detection with 1-second debounce to prevent false positives
