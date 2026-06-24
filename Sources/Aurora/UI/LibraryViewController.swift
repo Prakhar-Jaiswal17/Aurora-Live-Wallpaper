@@ -502,8 +502,25 @@ extension LibraryViewController: NSCollectionViewDelegate {
 
 extension LibraryViewController: DisplaySelectorDelegate {
     func displaySelectionDidChange(selectedDisplayIDs: Set<CGDirectDisplayID>) {
+        let removedDisplays = self.selectedDisplayIDs.subtracting(selectedDisplayIDs)
+        let addedDisplays = selectedDisplayIDs.subtracting(self.selectedDisplayIDs)
+
         self.selectedDisplayIDs = selectedDisplayIDs
         updateDisplaysButtonTitle()
+
+        // Remove live wallpaper window from deselected displays
+        for displayID in removedDisplays {
+            WallpaperManager.shared.removeWindow(for: displayID)
+        }
+
+        // Restore live wallpaper window for newly selected displays
+        for displayID in addedDisplays {
+            WallpaperManager.shared.initializeWindowForDisplay(displayID)
+            if let wallpaperID = WallpaperManager.shared.currentWallpaperID(for: displayID),
+               let wallpaper = WallpaperLibrary.shared.wallpaper(withID: wallpaperID) {
+                WallpaperManager.shared.setWallpaper(wallpaper, for: displayID)
+            }
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 // Aurora — PreferencesWindow
 // Tabbed NSWindowController with General, Performance, and Library tabs.
 // Uses NSVisualEffectView for native macOS vibrancy.
+// All tabs use Auto Layout with NSStackView for consistent, polished spacing.
 
 import AppKit
 
@@ -12,17 +13,34 @@ final class PreferencesWindow: NSWindowController {
     private var tabView: NSTabView!
     private var libraryViewController: LibraryViewController?
 
+    // MARK: - Layout Constants
+
+    private enum Layout {
+        static let windowWidth: CGFloat = 680
+        static let windowHeight: CGFloat = 660
+
+        static let sectionSpacing: CGFloat = 28       // Between major sections
+        static let controlSpacing: CGFloat = 10       // Between controls within a section
+        static let subtitleGap: CGFloat = 2           // Between title and subtitle
+        static let contentInsetTop: CGFloat = 28
+        static let contentInsetBottom: CGFloat = 28
+        static let contentInsetLeading: CGFloat = 32
+        static let contentInsetTrailing: CGFloat = 32
+        static let indentLeading: CGFloat = 18        // Sub-controls indent
+    }
+
     // MARK: - Init
 
     convenience init() {
         let window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 680, height: 660),
-            styleMask: [.titled, .closable, .miniaturizable],
+            contentRect: NSRect(x: 0, y: 0, width: Layout.windowWidth, height: Layout.windowHeight),
+            styleMask: [.titled, .closable, .miniaturizable, .resizable],
             backing: .buffered,
             defer: false
         )
         window.title = "Aurora Preferences"
         window.center()
+        window.minSize = NSSize(width: Layout.windowWidth, height: Layout.windowHeight)
         window.isReleasedWhenClosed = false
 
         // Vibrancy effect
@@ -40,7 +58,7 @@ final class PreferencesWindow: NSWindowController {
     // MARK: - Tab Setup
 
     private func setupTabs() {
-        tabView = NSTabView(frame: NSRect(x: 0, y: 0, width: 680, height: 660))
+        tabView = NSTabView(frame: NSRect(x: 0, y: 0, width: Layout.windowWidth, height: Layout.windowHeight))
         tabView.autoresizingMask = [.width, .height]
 
         // General Tab
@@ -60,7 +78,7 @@ final class PreferencesWindow: NSWindowController {
         libraryTab.label = "Library"
         let libVC = LibraryViewController()
         libraryViewController = libVC
-        let libraryContainerView = NSView(frame: NSRect(x: 0, y: 0, width: 680, height: 620))
+        let libraryContainerView = NSView(frame: NSRect(x: 0, y: 0, width: Layout.windowWidth, height: 620))
         libVC.view.frame = libraryContainerView.bounds
         libVC.view.translatesAutoresizingMaskIntoConstraints = false
         libraryContainerView.addSubview(libVC.view)
@@ -84,76 +102,87 @@ final class PreferencesWindow: NSWindowController {
     // MARK: - General Tab
 
     private func createGeneralTab() -> NSView {
-        let view = NSView(frame: NSRect(x: 0, y: 0, width: 680, height: 620))
         let settings = AuroraSettings.shared
 
-        var yOffset: CGFloat = 560
+        // Root stack view for the entire tab
+        let rootStack = createRootStack()
 
-        // Title
-        let titleLabel = createLabel("General Settings", bold: true, size: 16)
-        titleLabel.frame = NSRect(x: 30, y: yOffset, width: 300, height: 24)
-        view.addSubview(titleLabel)
-        yOffset -= 50
+        // ── General Settings ──
+        let generalTitle = createSectionTitle("General Settings")
+        rootStack.addArrangedSubview(generalTitle)
+        rootStack.setCustomSpacing(Layout.controlSpacing + 4, after: generalTitle)
 
         // Launch at Login
         let launchCheckbox = NSButton(checkboxWithTitle: "Launch Aurora at login", target: self, action: #selector(toggleLaunchAtLogin(_:)))
         launchCheckbox.state = settings.launchAtLogin ? .on : .off
-        launchCheckbox.frame = NSRect(x: 30, y: yOffset, width: 300, height: 24)
-        view.addSubview(launchCheckbox)
-        yOffset -= 35
+        launchCheckbox.font = .systemFont(ofSize: 13)
+        rootStack.addArrangedSubview(launchCheckbox)
+        rootStack.setCustomSpacing(Layout.controlSpacing, after: launchCheckbox)
 
         // Restore Last Session
         let restoreCheckbox = NSButton(checkboxWithTitle: "Restore wallpapers from last session on launch", target: self, action: #selector(toggleRestoreSession(_:)))
         restoreCheckbox.state = settings.restoreLastSession ? .on : .off
-        restoreCheckbox.frame = NSRect(x: 30, y: yOffset, width: 400, height: 24)
-        view.addSubview(restoreCheckbox)
-        yOffset -= 50
+        restoreCheckbox.font = .systemFont(ofSize: 13)
+        rootStack.addArrangedSubview(restoreCheckbox)
 
-        // Default Playback Settings section
-        let playbackLabel = createLabel("Default Playback Settings", bold: true, size: 14)
-        playbackLabel.frame = NSRect(x: 30, y: yOffset, width: 300, height: 20)
-        view.addSubview(playbackLabel)
-        yOffset -= 35
+        // ── Separator ──
+        rootStack.addArrangedSubview(createSeparator())
+
+        // ── Default Playback Settings ──
+        let playbackTitle = createSectionTitle("Default Playback Settings")
+        rootStack.addArrangedSubview(playbackTitle)
+        rootStack.setCustomSpacing(Layout.controlSpacing + 4, after: playbackTitle)
 
         // Loop by default
         let loopCheckbox = NSButton(checkboxWithTitle: "Loop wallpapers by default", target: self, action: #selector(toggleDefaultLoop(_:)))
         loopCheckbox.state = settings.defaultPlaybackSettings.isLooping ? .on : .off
-        loopCheckbox.frame = NSRect(x: 30, y: yOffset, width: 300, height: 24)
-        view.addSubview(loopCheckbox)
-        yOffset -= 35
+        loopCheckbox.font = .systemFont(ofSize: 13)
+        rootStack.addArrangedSubview(loopCheckbox)
+        rootStack.setCustomSpacing(Layout.controlSpacing, after: loopCheckbox)
 
         // Mute by default
         let muteCheckbox = NSButton(checkboxWithTitle: "Mute audio by default", target: self, action: #selector(toggleDefaultMute(_:)))
         muteCheckbox.state = settings.defaultPlaybackSettings.isMuted ? .on : .off
-        muteCheckbox.frame = NSRect(x: 30, y: yOffset, width: 300, height: 24)
-        view.addSubview(muteCheckbox)
-        yOffset -= 50
+        muteCheckbox.font = .systemFont(ofSize: 13)
+        rootStack.addArrangedSubview(muteCheckbox)
 
-        // ── Wallpaper Cycling Section ──
-        let cycleLabel = createLabel("Wallpaper Cycling", bold: true, size: 14)
-        cycleLabel.frame = NSRect(x: 30, y: yOffset, width: 300, height: 20)
-        view.addSubview(cycleLabel)
-        yOffset -= 10
+        // ── Separator ──
+        rootStack.addArrangedSubview(createSeparator())
 
-        let cycleDesc = createLabel("Automatically cycle through library wallpapers at a set interval", bold: false, size: 12)
-        cycleDesc.textColor = .secondaryLabelColor
-        cycleDesc.frame = NSRect(x: 30, y: yOffset, width: 500, height: 16)
-        view.addSubview(cycleDesc)
-        yOffset -= 35
+        // ── Wallpaper Cycling ──
+        let cycleTitle = createSectionTitle("Wallpaper Cycling")
+        rootStack.addArrangedSubview(cycleTitle)
+        rootStack.setCustomSpacing(Layout.subtitleGap, after: cycleTitle)
+
+        let cycleDesc = createSubtitle("Automatically cycle through library wallpapers at a set interval")
+        rootStack.addArrangedSubview(cycleDesc)
+        rootStack.setCustomSpacing(Layout.controlSpacing + 4, after: cycleDesc)
 
         // Enable checkbox
         let cycleCheckbox = NSButton(checkboxWithTitle: "Enable wallpaper cycling", target: self, action: #selector(toggleCycleEnabled(_:)))
         cycleCheckbox.state = settings.cycleEnabled ? .on : .off
-        cycleCheckbox.frame = NSRect(x: 30, y: yOffset, width: 300, height: 24)
-        view.addSubview(cycleCheckbox)
-        yOffset -= 35
+        cycleCheckbox.font = .systemFont(ofSize: 13)
+        rootStack.addArrangedSubview(cycleCheckbox)
+        rootStack.setCustomSpacing(Layout.controlSpacing + 2, after: cycleCheckbox)
 
-        // Interval row: "Every [__] [Minutes ▾]"
+        // Interval row: "Every [__] [Minutes ▾]  = Xm between changes"
+        let intervalRow = NSStackView()
+        intervalRow.orientation = .horizontal
+        intervalRow.alignment = .centerY
+        intervalRow.spacing = 8
+        intervalRow.translatesAutoresizingMaskIntoConstraints = false
+
+        // Indent spacer
+        let indentSpacer = NSView()
+        indentSpacer.translatesAutoresizingMaskIntoConstraints = false
+        indentSpacer.widthAnchor.constraint(equalToConstant: Layout.indentLeading).isActive = true
+        intervalRow.addArrangedSubview(indentSpacer)
+
         let everyLabel = createLabel("Every", bold: false, size: 13)
-        everyLabel.frame = NSRect(x: 48, y: yOffset, width: 40, height: 22)
-        view.addSubview(everyLabel)
+        intervalRow.addArrangedSubview(everyLabel)
 
-        let intervalField = NSTextField(frame: NSRect(x: 95, y: yOffset, width: 80, height: 24))
+        let intervalField = NSTextField()
+        intervalField.translatesAutoresizingMaskIntoConstraints = false
         intervalField.doubleValue = settings.cycleInterval
         intervalField.formatter = cycleIntervalFormatter()
         intervalField.alignment = .center
@@ -162,9 +191,11 @@ final class PreferencesWindow: NSWindowController {
         intervalField.action = #selector(cycleIntervalChanged(_:))
         intervalField.tag = 500
         intervalField.isEnabled = settings.cycleEnabled
-        view.addSubview(intervalField)
+        intervalField.widthAnchor.constraint(equalToConstant: 70).isActive = true
+        intervalRow.addArrangedSubview(intervalField)
 
-        let unitPopup = NSPopUpButton(frame: NSRect(x: 185, y: yOffset - 1, width: 110, height: 26))
+        let unitPopup = NSPopUpButton(frame: .zero, pullsDown: false)
+        unitPopup.translatesAutoresizingMaskIntoConstraints = false
         for unit in CycleUnit.allCases {
             unitPopup.addItem(withTitle: unit.displayName)
         }
@@ -173,139 +204,145 @@ final class PreferencesWindow: NSWindowController {
         unitPopup.action = #selector(cycleUnitChanged(_:))
         unitPopup.tag = 501
         unitPopup.isEnabled = settings.cycleEnabled
-        view.addSubview(unitPopup)
+        unitPopup.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        intervalRow.addArrangedSubview(unitPopup)
 
-        // Preview label showing the computed time
+        // Preview label
         let previewText = formatCyclePreview(interval: settings.cycleInterval, unit: settings.cycleUnit)
         let cyclePreviewLabel = createLabel(previewText, bold: false, size: 11)
         cyclePreviewLabel.textColor = .tertiaryLabelColor
-        cyclePreviewLabel.frame = NSRect(x: 310, y: yOffset + 2, width: 250, height: 18)
         cyclePreviewLabel.tag = 502
-        view.addSubview(cyclePreviewLabel)
+        cyclePreviewLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        intervalRow.addArrangedSubview(cyclePreviewLabel)
 
-        return view
+        rootStack.addArrangedSubview(intervalRow)
+
+        // Wrap in scroll view
+        return wrapInScrollView(rootStack)
     }
 
     // MARK: - Performance Tab
 
     private func createPerformanceTab() -> NSView {
-        let view = NSView(frame: NSRect(x: 0, y: 0, width: 680, height: 620))
         let settings = AuroraSettings.shared
 
-        var yOffset: CGFloat = 560
+        // Root stack view
+        let rootStack = createRootStack()
 
-        // Title
-        let titleLabel = createLabel("Performance Settings", bold: true, size: 16)
-        titleLabel.frame = NSRect(x: 30, y: yOffset, width: 300, height: 24)
-        view.addSubview(titleLabel)
-        yOffset -= 40
+        // ── Performance Settings ──
+        let titleLabel = createSectionTitle("Performance Settings")
+        rootStack.addArrangedSubview(titleLabel)
+        rootStack.setCustomSpacing(Layout.controlSpacing + 4, after: titleLabel)
 
         // Fullscreen pause
         let fullscreenCheckbox = NSButton(checkboxWithTitle: "Pause wallpaper when a fullscreen app is active", target: self, action: #selector(toggleFullscreenPause(_:)))
         fullscreenCheckbox.state = settings.pauseOnFullscreen ? .on : .off
-        fullscreenCheckbox.frame = NSRect(x: 30, y: yOffset, width: 400, height: 24)
-        view.addSubview(fullscreenCheckbox)
-        yOffset -= 35
+        fullscreenCheckbox.font = .systemFont(ofSize: 13)
+        rootStack.addArrangedSubview(fullscreenCheckbox)
 
-        // Background App Focus
-        let bgLabel = createLabel("When Another Window is Active", bold: true, size: 14)
-        bgLabel.frame = NSRect(x: 30, y: yOffset, width: 300, height: 20)
-        view.addSubview(bgLabel)
-        yOffset -= 10
+        // ── Separator ──
+        rootStack.addArrangedSubview(createSeparator())
 
-        let bgDesc = createLabel("Controls what happens when you are working in another window", bold: false, size: 12)
-        bgDesc.textColor = .secondaryLabelColor
-        bgDesc.frame = NSRect(x: 30, y: yOffset, width: 500, height: 16)
-        view.addSubview(bgDesc)
-        yOffset -= 25
+        // ── When Another Window is Active ──
+        let bgTitle = createSectionTitle("When Another Window is Active")
+        rootStack.addArrangedSubview(bgTitle)
+        rootStack.setCustomSpacing(Layout.subtitleGap, after: bgTitle)
 
+        let bgDesc = createSubtitle("Controls what happens when you are working in another window")
+        rootStack.addArrangedSubview(bgDesc)
+        rootStack.setCustomSpacing(Layout.controlSpacing + 4, after: bgDesc)
+
+        // Background mode radio buttons
         let bgModes: [(BackgroundBehavior, String)] = [
             (.keepPlaying, "Keep playing normally"),
             (.lowerFramerate, "Lower framerate (refresh rate)"),
             (.pause, "Pause wallpaper")
         ]
 
-        var throttleRadioBtn: NSButton?
-
-        for (mode, title) in bgModes {
-            let radio = NSButton(radioButtonWithTitle: title, target: self, action: #selector(backgroundModeChanged(_:)))
-            radio.tag = bgModes.firstIndex(where: { $0.0 == mode })! + 200
-            radio.state = settings.backgroundBehavior == mode ? .on : .off
-            radio.frame = NSRect(x: 48, y: yOffset, width: 300, height: 22)
-            view.addSubview(radio)
-            
+        for (index, (mode, title)) in bgModes.enumerated() {
             if mode == .lowerFramerate {
-                throttleRadioBtn = radio
+                // Lower framerate radio with inline FPS slider
+                let fpsRow = createRadioWithSliderRow(
+                    radioTitle: title,
+                    radioTag: index + 200,
+                    isSelected: settings.backgroundBehavior == mode,
+                    sliderValue: Double(settings.backgroundFramerate),
+                    sliderTag: 300,
+                    labelTag: 301,
+                    labelText: "\(settings.backgroundFramerate) FPS",
+                    sliderEnabled: settings.backgroundBehavior == .lowerFramerate,
+                    target: self,
+                    radioAction: #selector(backgroundModeChanged(_:)),
+                    sliderAction: #selector(backgroundFramerateChanged(_:))
+                )
+                rootStack.addArrangedSubview(fpsRow)
+                rootStack.setCustomSpacing(Layout.controlSpacing - 2, after: fpsRow)
+            } else {
+                // Keep playing / Pause — plain radio button (no slider)
+                let radio = NSButton(radioButtonWithTitle: title, target: self, action: #selector(backgroundModeChanged(_:)))
+                radio.tag = index + 200
+                radio.state = settings.backgroundBehavior == mode ? .on : .off
+                radio.font = .systemFont(ofSize: 13)
+
+                let indentedRadio = createIndentedView(radio)
+                rootStack.addArrangedSubview(indentedRadio)
+                rootStack.setCustomSpacing(Layout.controlSpacing - 2, after: indentedRadio)
             }
-            yOffset -= 28
         }
-        
-        yOffset += 28 // Go back line to add slider
-        
-        // Framerate slider (enabled only if lowerFramerate is selected)
-        let fpsSlider = NSSlider(value: Double(settings.backgroundFramerate), minValue: 1, maxValue: 60, target: self, action: #selector(backgroundFramerateChanged(_:)))
-        fpsSlider.frame = NSRect(x: 320, y: yOffset + 2, width: 150, height: 20)
-        fpsSlider.tag = 300
-        fpsSlider.isEnabled = settings.backgroundBehavior == .lowerFramerate
-        view.addSubview(fpsSlider)
 
-        let fpsLabel = createLabel("\(settings.backgroundFramerate) FPS", bold: true, size: 12)
-        fpsLabel.frame = NSRect(x: 480, y: yOffset + 2, width: 60, height: 18)
-        fpsLabel.tag = 301
-        fpsLabel.textColor = settings.backgroundBehavior == .lowerFramerate ? .labelColor : .disabledControlTextColor
-        view.addSubview(fpsLabel)
+        // ── Separator ──
+        rootStack.addArrangedSubview(createSeparator())
 
-        yOffset -= 40
+        // ── Battery Mode ──
+        let batteryTitle = createSectionTitle("Battery Mode")
+        rootStack.addArrangedSubview(batteryTitle)
+        rootStack.setCustomSpacing(Layout.subtitleGap, after: batteryTitle)
 
-        // Battery section
-        let batteryLabel = createLabel("Battery Mode", bold: true, size: 14)
-        batteryLabel.frame = NSRect(x: 30, y: yOffset, width: 300, height: 20)
-        view.addSubview(batteryLabel)
-        yOffset -= 10
+        let batteryDesc = createSubtitle("Controls wallpaper behavior when running on battery power")
+        rootStack.addArrangedSubview(batteryDesc)
+        rootStack.setCustomSpacing(Layout.controlSpacing + 4, after: batteryDesc)
 
-        let batteryDesc = createLabel("Controls wallpaper behavior when running on battery power", bold: false, size: 12)
-        batteryDesc.textColor = .secondaryLabelColor
-        batteryDesc.frame = NSRect(x: 30, y: yOffset, width: 500, height: 16)
-        view.addSubview(batteryDesc)
-        yOffset -= 35
-
-        // Battery mode radio buttons
         let modes: [(BatteryMode, String)] = [
             (.aggressive, "Pause wallpaper (saves most battery)"),
             (.balanced, "Reduce speed to 0.5x (balanced)"),
             (.permissive, "Keep playing normally (uses more battery)")
         ]
 
-        for (mode, title) in modes {
+        for (index, (mode, title)) in modes.enumerated() {
             let radio = NSButton(radioButtonWithTitle: title, target: self, action: #selector(batteryModeChanged(_:)))
-            radio.tag = modes.firstIndex(where: { $0.0 == mode })!
+            radio.tag = index + 400
             radio.state = settings.batteryMode == mode ? .on : .off
-            radio.frame = NSRect(x: 48, y: yOffset, width: 450, height: 22)
-            view.addSubview(radio)
-            yOffset -= 28
+            radio.font = .systemFont(ofSize: 13)
+
+            let indentedRadio = createIndentedView(radio)
+            rootStack.addArrangedSubview(indentedRadio)
+
+            if index < modes.count - 1 {
+                rootStack.setCustomSpacing(Layout.controlSpacing - 2, after: indentedRadio)
+            }
         }
 
-        yOffset -= 20
+        // ── Separator ──
+        rootStack.addArrangedSubview(createSeparator())
 
-        // CPU threshold slider
-        let cpuLabel = createLabel("CPU Usage Threshold: \(Int(settings.cpuThreshold))%", bold: true, size: 14)
-        cpuLabel.frame = NSRect(x: 30, y: yOffset, width: 300, height: 20)
-        cpuLabel.tag = 100  // Tag for updating
-        view.addSubview(cpuLabel)
-        yOffset -= 10
+        // ── CPU Usage Threshold ──
+        let cpuTitle = createSectionTitle("CPU Usage Threshold: \(Int(settings.cpuThreshold))%")
+        cpuTitle.tag = 100
+        rootStack.addArrangedSubview(cpuTitle)
+        rootStack.setCustomSpacing(Layout.subtitleGap, after: cpuTitle)
 
-        let cpuDesc = createLabel("Throttle wallpaper when system CPU usage exceeds this value", bold: false, size: 12)
-        cpuDesc.textColor = .secondaryLabelColor
-        cpuDesc.frame = NSRect(x: 30, y: yOffset, width: 500, height: 16)
-        view.addSubview(cpuDesc)
-        yOffset -= 30
+        let cpuDesc = createSubtitle("Throttle wallpaper when system CPU usage exceeds this value")
+        rootStack.addArrangedSubview(cpuDesc)
+        rootStack.setCustomSpacing(Layout.controlSpacing + 4, after: cpuDesc)
 
         let slider = NSSlider(value: settings.cpuThreshold, minValue: 50, maxValue: 100, target: self, action: #selector(cpuThresholdChanged(_:)))
-        slider.frame = NSRect(x: 30, y: yOffset, width: 300, height: 24)
+        slider.translatesAutoresizingMaskIntoConstraints = false
         slider.isContinuous = true
-        view.addSubview(slider)
+        slider.widthAnchor.constraint(equalToConstant: 320).isActive = true
+        rootStack.addArrangedSubview(slider)
 
-        return view
+        // Wrap in scroll view
+        return wrapInScrollView(rootStack)
     }
 
     // MARK: - Actions
@@ -340,13 +377,25 @@ final class PreferencesWindow: NSWindowController {
         if index >= 0 && index < modes.count {
             AuroraSettings.shared.backgroundBehavior = modes[index]
             AuroraLogger.ui.info("Background behavior changed to: \(modes[index].rawValue)")
-            
-            // Enable/disable FPS slider
-            if let slider = sender.superview?.viewWithTag(300) as? NSSlider,
-               let label = sender.superview?.viewWithTag(301) as? NSTextField {
+
+            // Manually deselect sibling radio buttons (they don't auto-group
+            // because each lives in a different NSStackView wrapper)
+            if let tabContent = sender.window?.contentView {
+                for tag in [200, 201, 202] {
+                    if tag != sender.tag,
+                       let otherRadio = tabContent.findView(withTag: tag) as? NSButton {
+                        otherRadio.state = .off
+                    }
+                }
+
+                // Enable/disable FPS slider
                 let isLower = modes[index] == .lowerFramerate
-                slider.isEnabled = isLower
-                label.textColor = isLower ? .labelColor : .disabledControlTextColor
+                if let slider = tabContent.findView(withTag: 300) as? NSSlider {
+                    slider.isEnabled = isLower
+                }
+                if let label = tabContent.findView(withTag: 301) as? NSTextField {
+                    label.textColor = isLower ? .labelColor : .disabledControlTextColor
+                }
             }
         }
     }
@@ -354,16 +403,28 @@ final class PreferencesWindow: NSWindowController {
     @objc private func backgroundFramerateChanged(_ sender: NSSlider) {
         let fps = sender.integerValue
         AuroraSettings.shared.backgroundFramerate = fps
-        if let label = sender.superview?.viewWithTag(301) as? NSTextField {
+        if let tabContent = sender.window?.contentView,
+           let label = tabContent.findView(withTag: 301) as? NSTextField {
             label.stringValue = "\(fps) FPS"
         }
     }
 
     @objc private func batteryModeChanged(_ sender: NSButton) {
         let modes: [BatteryMode] = [.aggressive, .balanced, .permissive]
-        if sender.tag < modes.count {
-            AuroraSettings.shared.batteryMode = modes[sender.tag]
-            AuroraLogger.ui.info("Battery mode changed to: \(modes[sender.tag].rawValue, privacy: .public)")
+        let index = sender.tag - 400
+        if index >= 0 && index < modes.count {
+            AuroraSettings.shared.batteryMode = modes[index]
+            AuroraLogger.ui.info("Battery mode changed to: \(modes[index].rawValue, privacy: .public)")
+
+            // Manually deselect sibling radio buttons
+            if let tabContent = sender.window?.contentView {
+                for tag in [400, 401, 402] {
+                    if tag != sender.tag,
+                       let otherRadio = tabContent.findView(withTag: tag) as? NSButton {
+                        otherRadio.state = .off
+                    }
+                }
+            }
         }
     }
 
@@ -371,21 +432,11 @@ final class PreferencesWindow: NSWindowController {
         let value = sender.doubleValue
         AuroraSettings.shared.cpuThreshold = value
 
-        // Update the label
-        if let label = sender.superview?.viewWithTag(100) as? NSTextField {
+        // Update the label — search the window hierarchy
+        if let tabContent = sender.window?.contentView,
+           let label = tabContent.findView(withTag: 100) as? NSTextField {
             label.stringValue = "CPU Usage Threshold: \(Int(value))%"
         }
-    }
-
-    // MARK: - Helpers
-
-    private func createLabel(_ text: String, bold: Bool, size: CGFloat) -> NSTextField {
-        let label = NSTextField(labelWithString: text)
-        label.font = bold ? .boldSystemFont(ofSize: size) : .systemFont(ofSize: size)
-        label.isEditable = false
-        label.isBezeled = false
-        label.drawsBackground = false
-        return label
     }
 
     // MARK: - Cycle Actions
@@ -395,11 +446,13 @@ final class PreferencesWindow: NSWindowController {
         AuroraSettings.shared.cycleEnabled = enabled
 
         // Enable/disable the interval field and unit popup
-        if let intervalField = sender.superview?.viewWithTag(500) as? NSTextField {
-            intervalField.isEnabled = enabled
-        }
-        if let unitPopup = sender.superview?.viewWithTag(501) as? NSPopUpButton {
-            unitPopup.isEnabled = enabled
+        if let tabContent = sender.window?.contentView {
+            if let intervalField = tabContent.findView(withTag: 500) as? NSTextField {
+                intervalField.isEnabled = enabled
+            }
+            if let unitPopup = tabContent.findView(withTag: 501) as? NSPopUpButton {
+                unitPopup.isEnabled = enabled
+            }
         }
         AuroraLogger.ui.info("Wallpaper cycling \(enabled ? "enabled" : "disabled")")
     }
@@ -408,7 +461,7 @@ final class PreferencesWindow: NSWindowController {
         let value = sender.doubleValue
         guard value > 0 else { return }
         AuroraSettings.shared.cycleInterval = value
-        updateCyclePreviewLabel(in: sender.superview)
+        updateCyclePreviewLabel(in: sender.window?.contentView)
     }
 
     @objc private func cycleUnitChanged(_ sender: NSPopUpButton) {
@@ -416,11 +469,11 @@ final class PreferencesWindow: NSWindowController {
         let index = sender.indexOfSelectedItem
         guard index >= 0 && index < units.count else { return }
         AuroraSettings.shared.cycleUnit = units[index]
-        updateCyclePreviewLabel(in: sender.superview)
+        updateCyclePreviewLabel(in: sender.window?.contentView)
     }
 
     private func updateCyclePreviewLabel(in parentView: NSView?) {
-        guard let label = parentView?.viewWithTag(502) as? NSTextField else { return }
+        guard let label = parentView?.findView(withTag: 502) as? NSTextField else { return }
         let settings = AuroraSettings.shared
         label.stringValue = formatCyclePreview(interval: settings.cycleInterval, unit: settings.cycleUnit)
     }
@@ -448,5 +501,210 @@ final class PreferencesWindow: NSWindowController {
         formatter.minimumFractionDigits = 0
         formatter.allowsFloats = true
         return formatter
+    }
+
+    // MARK: - Layout Helpers
+
+    /// Creates the root vertical stack view for a tab with consistent edge insets.
+    private func createRootStack() -> NSStackView {
+        let stack = NSStackView()
+        stack.orientation = .vertical
+        stack.alignment = .leading
+        stack.spacing = Layout.sectionSpacing
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        stack.edgeInsets = NSEdgeInsets(
+            top: Layout.contentInsetTop,
+            left: Layout.contentInsetLeading,
+            bottom: Layout.contentInsetBottom,
+            right: Layout.contentInsetTrailing
+        )
+        return stack
+    }
+
+    /// Creates a section title label (14pt semibold).
+    private func createSectionTitle(_ text: String) -> NSTextField {
+        let label = NSTextField(labelWithString: text)
+        label.font = .systemFont(ofSize: 15, weight: .semibold)
+        label.textColor = .labelColor
+        label.isEditable = false
+        label.isBezeled = false
+        label.drawsBackground = false
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }
+
+    /// Creates a subtitle/description label (12pt, secondary color).
+    private func createSubtitle(_ text: String) -> NSTextField {
+        let label = NSTextField(labelWithString: text)
+        label.font = .systemFont(ofSize: 12)
+        label.textColor = .secondaryLabelColor
+        label.isEditable = false
+        label.isBezeled = false
+        label.drawsBackground = false
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }
+
+    /// Creates a basic label.
+    private func createLabel(_ text: String, bold: Bool, size: CGFloat) -> NSTextField {
+        let label = NSTextField(labelWithString: text)
+        label.font = bold ? .boldSystemFont(ofSize: size) : .systemFont(ofSize: size)
+        label.isEditable = false
+        label.isBezeled = false
+        label.drawsBackground = false
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }
+
+    /// Creates a horizontal separator with vertical spacing.
+    private func createSeparator() -> NSView {
+        let container = NSView()
+        container.translatesAutoresizingMaskIntoConstraints = false
+
+        let separator = NSBox()
+        separator.boxType = .separator
+        separator.translatesAutoresizingMaskIntoConstraints = false
+        container.addSubview(separator)
+
+        NSLayoutConstraint.activate([
+            container.heightAnchor.constraint(equalToConstant: 1),
+            container.widthAnchor.constraint(greaterThanOrEqualToConstant: 400),
+            separator.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            separator.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            separator.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+        ])
+
+        return container
+    }
+
+    /// Wraps a view in an indented container (adds leading padding).
+    private func createIndentedView(_ view: NSView) -> NSStackView {
+        let row = NSStackView()
+        row.orientation = .horizontal
+        row.alignment = .centerY
+        row.spacing = 0
+        row.translatesAutoresizingMaskIntoConstraints = false
+
+        let spacer = NSView()
+        spacer.translatesAutoresizingMaskIntoConstraints = false
+        spacer.widthAnchor.constraint(equalToConstant: Layout.indentLeading).isActive = true
+        row.addArrangedSubview(spacer)
+        row.addArrangedSubview(view)
+
+        return row
+    }
+
+    /// Creates a radio button row with an inline slider and label (e.g., for framerate).
+    private func createRadioWithSliderRow(
+        radioTitle: String,
+        radioTag: Int,
+        isSelected: Bool,
+        sliderValue: Double,
+        sliderTag: Int,
+        labelTag: Int,
+        labelText: String,
+        sliderEnabled: Bool,
+        target: AnyObject,
+        radioAction: Selector,
+        sliderAction: Selector
+    ) -> NSStackView {
+        let row = NSStackView()
+        row.orientation = .horizontal
+        row.alignment = .centerY
+        row.spacing = 12
+        row.translatesAutoresizingMaskIntoConstraints = false
+
+        // Indent spacer
+        let spacer = NSView()
+        spacer.translatesAutoresizingMaskIntoConstraints = false
+        spacer.widthAnchor.constraint(equalToConstant: Layout.indentLeading).isActive = true
+        row.addArrangedSubview(spacer)
+
+        // Radio button
+        let radio = NSButton(radioButtonWithTitle: radioTitle, target: target, action: radioAction)
+        radio.tag = radioTag
+        radio.state = isSelected ? .on : .off
+        radio.font = .systemFont(ofSize: 13)
+        radio.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        row.addArrangedSubview(radio)
+
+        // Slider
+        let slider = NSSlider(value: sliderValue, minValue: 1, maxValue: 60, target: target, action: sliderAction)
+        slider.translatesAutoresizingMaskIntoConstraints = false
+        slider.tag = sliderTag
+        slider.isEnabled = sliderEnabled
+        slider.widthAnchor.constraint(equalToConstant: 120).isActive = true
+        row.addArrangedSubview(slider)
+
+        // FPS label
+        let fpsLabel = createLabel(labelText, bold: true, size: 12)
+        fpsLabel.tag = labelTag
+        fpsLabel.textColor = sliderEnabled ? .labelColor : .disabledControlTextColor
+        fpsLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
+        row.addArrangedSubview(fpsLabel)
+
+        return row
+    }
+
+    /// Wraps a stack view in a scroll view for safe display on smaller windows.
+    private func wrapInScrollView(_ contentStack: NSStackView) -> NSView {
+        let containerView = NSView(frame: NSRect(x: 0, y: 0, width: Layout.windowWidth, height: 620))
+
+        // Flipped document view ensures content starts at top
+        let flippedView = FlippedView()
+        flippedView.translatesAutoresizingMaskIntoConstraints = false
+        flippedView.addSubview(contentStack)
+
+        NSLayoutConstraint.activate([
+            contentStack.topAnchor.constraint(equalTo: flippedView.topAnchor),
+            contentStack.leadingAnchor.constraint(equalTo: flippedView.leadingAnchor),
+            contentStack.trailingAnchor.constraint(equalTo: flippedView.trailingAnchor),
+            contentStack.bottomAnchor.constraint(lessThanOrEqualTo: flippedView.bottomAnchor),
+        ])
+
+        let scrollView = NSScrollView()
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.documentView = flippedView
+        scrollView.hasVerticalScroller = true
+        scrollView.drawsBackground = false
+        scrollView.automaticallyAdjustsContentInsets = false
+        scrollView.contentInsets = NSEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+
+        containerView.addSubview(scrollView)
+
+        NSLayoutConstraint.activate([
+            scrollView.topAnchor.constraint(equalTo: containerView.topAnchor),
+            scrollView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
+
+            flippedView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
+        ])
+
+        return containerView
+    }
+}
+
+// MARK: - FlippedView
+
+/// An NSView subclass that flips the coordinate system so content flows top-to-bottom.
+/// Required for scroll views with Auto Layout stack views to display content from the top.
+private class FlippedView: NSView {
+    override var isFlipped: Bool { true }
+}
+
+// MARK: - NSView Tag Finder
+
+extension NSView {
+    /// Recursively finds a subview with the given tag in the entire view hierarchy.
+    /// More reliable than `viewWithTag(_:)` which only searches immediate subviews on macOS.
+    func findView(withTag tag: Int) -> NSView? {
+        if self.tag == tag { return self }
+        for subview in subviews {
+            if let found = subview.findView(withTag: tag) {
+                return found
+            }
+        }
+        return nil
     }
 }

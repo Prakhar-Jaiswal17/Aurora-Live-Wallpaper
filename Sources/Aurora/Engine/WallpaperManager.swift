@@ -91,13 +91,26 @@ final class WallpaperManager {
         // Use bounds-relative frame (origin 0,0) — screen.frame includes absolute offset
         let contentView = NSView(frame: NSRect(origin: .zero, size: screen.frame.size))
         contentView.wantsLayer = true
-        contentView.layer?.backgroundColor = NSColor.black.cgColor
+        contentView.layer?.backgroundColor = NSColor.clear.cgColor
         window.contentView = contentView
 
         windows[displayID] = window
         window.showWithFadeIn()
 
         AuroraLogger.logWindowState("Window created and shown for display \(displayID)")
+    }
+
+    /// Initializes a window for a specific display by its ID (if connected).
+    func initializeWindowForDisplay(_ displayID: CGDirectDisplayID) {
+        guard windows[displayID] == nil else {
+            AuroraLogger.engine.debug("Window already exists for display \(displayID), skipping")
+            return
+        }
+        guard let screen = NSScreen.screens.first(where: { $0.displayID == displayID }) else {
+            AuroraLogger.engine.debug("Screen for display \(displayID) not found, cannot initialize window")
+            return
+        }
+        createWindow(for: screen)
     }
 
     /// Removes and cleans up the wallpaper window for a display.

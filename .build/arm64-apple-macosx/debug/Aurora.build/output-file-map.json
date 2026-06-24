@@ -114,6 +114,13 @@
     "swift-dependencies": "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/SpacesObserver.swiftdeps",
     "diagnostics": "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/SpacesObserver.dia"
   },
+  "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/DisplaySelectorViewController.swift": {
+    "dependencies": "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/DisplaySelectorViewController.d",
+    "object": "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/DisplaySelectorViewController.swift.o",
+    "swiftmodule": "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/DisplaySelectorViewController~partial.swiftmodule",
+    "swift-dependencies": "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/DisplaySelectorViewController.swiftdeps",
+    "diagnostics": "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/DisplaySelectorViewController.dia"
+  },
   "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/ImportHandler.swift": {
     "dependencies": "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/ImportHandler.d",
     "object": "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/ImportHandler.swift.o",

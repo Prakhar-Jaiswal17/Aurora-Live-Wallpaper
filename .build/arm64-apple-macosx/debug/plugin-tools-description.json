@@ -88,6 +88,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/DisplaySelectorViewController.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/ImportHandler.swift"
         },
         {
@@ -139,6 +143,7 @@
         "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/PerformanceMonitor.swift.o",
         "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/PowerManager.swift.o",
         "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/SpacesObserver.swift.o",
+        "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/DisplaySelectorViewController.swift.o",
         "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/ImportHandler.swift.o",
         "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/LibraryViewController.swift.o",
         "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/PreferencesWindow.swift.o",
@@ -257,6 +262,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/DisplaySelectorViewController.swift.o"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/ImportHandler.swift.o"
         },
         {
@@ -302,6 +311,7 @@
         "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/System/PerformanceMonitor.swift",
         "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/System/PowerManager.swift",
         "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/System/SpacesObserver.swift",
+        "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/DisplaySelectorViewController.swift",
         "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/ImportHandler.swift",
         "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/LibraryViewController.swift",
         "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/PreferencesWindow.swift",
@@ -340,6 +350,7 @@
       "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/System/PerformanceMonitor.swift",
       "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/System/PowerManager.swift",
       "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/System/SpacesObserver.swift",
+      "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/DisplaySelectorViewController.swift",
       "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/ImportHandler.swift",
       "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/LibraryViewController.swift",
       "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/PreferencesWindow.swift",
@@ -497,6 +508,10 @@
         },
         {
           "kind" : "file",
+          "name" : "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/DisplaySelectorViewController.swift"
+        },
+        {
+          "kind" : "file",
           "name" : "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/Sources/Aurora/UI/ImportHandler.swift"
         },
         {
@@ -544,6 +559,10 @@
         {
           "kind" : "file",
           "name" : "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/DisplayManager.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/prakharjaiswal/Coding/Programming/antiGravity/live-wallpaper/Aurora/.build/arm64-apple-macosx/debug/Aurora.build/DisplaySelectorViewController.swift.o"
         },
         {
           "kind" : "file",
